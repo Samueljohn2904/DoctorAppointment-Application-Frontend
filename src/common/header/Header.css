@@ -1,0 +1,36 @@
+.header {
+    background-color: purple;
+    height: 70px;
+    padding: 11px;
+}
+
+.header-logo {
+    background-color: #ff7f7f;
+    height: 35px;
+    float: left;
+    margin: 15px;
+}
+
+.header-btn-1{
+    display: flex;
+    vertical-align: top;
+    align-items: flex-end;
+    justify-content: flex-end;
+    text-align: right;
+    float: right;
+}
+
+.header-name {
+    margin-top: 20px;
+    color: white;
+    size: 20px;
+}
+
+.modal-header {
+    background-color: purple;
+    color: white;
+    height: 50px;
+    margin: 0px;
+    padding-top: 30px;
+    padding-left: 10px;
+}
