@@ -1,4 +1,4 @@
-import React , {useEffect, useState} from 'react';
+import React , {useState} from 'react';
 import '../../common/header/Header.css';
 import FormControl from "@material-ui/core/FormControl";
 import { InputLabel, Input, Typography, TextField} from '@material-ui/core';
@@ -27,7 +27,6 @@ const Register = function(props){
         errdob:''
     });
     const [successMessage, setSuccessMessage] = useState("");
-    const [registerDataOk, setRegisterDataOk] = useState(0);
 
     // Function to handle user inputs
 
@@ -44,9 +43,8 @@ const Register = function(props){
     // Function to validate the user inputs on clicking Register button
 
     const validateData = function() {
-        console.log("In validation");
         let errorData = errData;
-        const regex = new RegExp("^[a-zA-Z0-9]+@[a-z]+\.[a-z]{2,3}$");
+        const regex = new RegExp("^[a-zA-Z0-9]+@[a-z]+[.][a-z]{2,3}$");
         const mobileRegex = new RegExp("^[0-9]{10}$");
         errorData.erremailId=(userData.emailId==="")?"Please fill out this field": (regex.test(userData.emailId))?"":"Enter Valid Email";
         errorData.errlastName=(userData.lastName==="")?"Please fill out this field":"";
@@ -68,7 +66,6 @@ const Register = function(props){
 
     const OnRegisterSubmitHandler = async function(e){
         e.preventDefault();
-        console.log("In Register Handler");
         if(validateData()){
             try{
                 const rawResponse = await fetch('/users/register',

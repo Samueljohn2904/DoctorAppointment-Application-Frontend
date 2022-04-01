@@ -1,4 +1,4 @@
-import React , {useState, useEffect, Fragment} from 'react';
+import React , {useState, Fragment} from 'react';
 import './Header.css';
 import Button from '@material-ui/core/Button';
 import Login from '../../screens/login/Login';
@@ -7,7 +7,6 @@ import Modal from '@material-ui/core/Modal';
 import image from '../../assets/logo.jpeg';
 import Tabs from "@material-ui/core/Tabs";
 import {Tab} from "@material-ui/core";
-import { TabPanel } from '@material-ui/lab';
 
 const Header = function(properties) {
 
@@ -15,11 +14,12 @@ const Header = function(properties) {
 
     const logoutUrl = 'http://localhost:8080/auth/logout';
 
-    const [isUserLoggedIn, setIsUserLoggedIn] = useState('false');
     const [tabStatus, setTabStatus] = useState({
         login:false,
     });
     const [tabCurrentValue, setTabValue] = useState(0);
+
+    //Handler functions for buttons, Tab and Modal
 
     const loginHandler = function(){
         setTabStatus({login:true});
@@ -60,6 +60,8 @@ const Header = function(properties) {
         );
       }
 
+      //Function to handle logout
+
       const logoutHandler = async function(){
         const bearerToken = window.sessionStorage.getItem('accessToken');
         try {
@@ -75,7 +77,7 @@ const Header = function(properties) {
             if(rawResponse.ok) {
                 window.sessionStorage.removeItem('user-details');
                 window.sessionStorage.removeItem('accessToken');
-                setIsUserLoggedIn('false');
+                properties.setIsUserLoggedIn('false');
                 window.location.reload();
             } else {
                 const error = new Error(); 
@@ -85,6 +87,8 @@ const Header = function(properties) {
             alert(`Error: ${e.message}`);
         }
     }
+
+    //Function to handle login
 
     const OnLoginSubmitHandler = async function(email, password){
         const param = window.btoa(`${email}:${password}`);
@@ -101,8 +105,8 @@ const Header = function(properties) {
             const result = await rawResponse.json();
             if(rawResponse.ok) {
                 window.sessionStorage.setItem('user-details', JSON.stringify(result));
-                console.log(result);
                 window.sessionStorage.setItem('accessToken', result['accessToken']);
+                properties.setIsUserLoggedIn('true');
                 closeLoginHandler();
 
             } else {
@@ -114,22 +118,15 @@ const Header = function(properties) {
         }
     }
 
-    useEffect(()=>{
-        if(sessionStorage.getItem('accessToken')===null)
-            setIsUserLoggedIn("false");
-        else
-            setIsUserLoggedIn('true');
-    })
-
     return (
         <Fragment>
             <div className='header'>
                 <img className='header-logo' src={image} alt="logo"/>
-                {isUserLoggedIn==='false' && <Button className='header-btn-1' variant="contained" onClick={loginHandler} color="primary" style={{marginTop:"15px"}}>LOGIN</Button>}
-                {isUserLoggedIn==='true' && <Button className='header-btn-1' variant="contained" onClick={logoutHandler} color="secondary" style={{marginTop:"15px"}}>LOGOUT</Button>}
+                {properties.isUserLoggedIn==='false' && <Button className='header-btn-1' variant="contained" onClick={loginHandler} color="primary" style={{marginTop:"15px"}}>LOGIN</Button>}
+                {properties.isUserLoggedIn==='true' && <Button className='header-btn-1' variant="contained" onClick={logoutHandler} color="secondary" style={{marginTop:"15px"}}>LOGOUT</Button>}
                 <h2 className='header-name'>Doctor Finder</h2>
             </div>
-            {isUserLoggedIn==='false' && <Modal open={login} onClose={closeLoginHandler} style={ModalStyle}>
+            {properties.isUserLoggedIn==='false' && <Modal open={login} onClose={closeLoginHandler} style={ModalStyle}>
                 <div className="Login-modal" style={{background:"white"}}>
                     <h3 className='modal-header'>Athentication</h3>
                     <Tabs value={tabCurrentValue} onChange={handleTabChange} aria-label="basic tabs example"> 

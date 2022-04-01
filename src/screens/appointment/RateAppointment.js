@@ -1,13 +1,14 @@
-import React , {useState, useEffect, Fragment} from 'react';
+import React , {useState, Fragment} from 'react';
 import Modal from '@material-ui/core/Modal';
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
-import { FormControl, TextField, Typography, Input } from '@material-ui/core';
+import { FormControl, TextField, Typography} from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
-import StarBorderIcon from "@material-ui/icons/StarBorder";
 import { Button } from '@material-ui/core';
 
 const RateAppointment = function(props) {
+
+    //State variables to store user appointment rating details
 
     const [modalOpenStatus, setModalOpenStatus] = useState(true);
     const [ratingError, setRatingError] = useState('');
@@ -20,10 +21,14 @@ const RateAppointment = function(props) {
         "comments":comment
     })
 
+    //Function to close the rate appointment modal
+
     const handleClose = function(){
         setModalOpenStatus(false);
         props.closeRateAppointment();
     }
+
+    //Function to submit the rating to backend server
 
     const OnRateAppointmentHandler = async function(e){
         e.preventDefault();
@@ -68,10 +73,14 @@ const RateAppointment = function(props) {
         }
     }
 
+    //Function to store the user comments
+
     const handleComments = function(e){
         setComment(e.target.value);
     }
 
+    //Styling attributes
+    
     const ModalStyle = {
         display:"grid", 
         justifyContent:"center",
@@ -103,7 +112,6 @@ const RateAppointment = function(props) {
                         onChange={(newValue) => {
                             setRatingError('');
                             setRatingValue(parseInt(newValue.target.value));
-                            console.log(ratingValue);
                         }}
                     />
                     </Typography>

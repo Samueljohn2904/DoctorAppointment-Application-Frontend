@@ -1,8 +1,7 @@
 import React , {useState, useEffect, Fragment} from 'react';
 import {Box, Paper} from "@material-ui/core";
-import InputLabel from '@material-ui/core/InputLabel';
 import Select from '@material-ui/core/Select';
-import { FormControl, TextField, Typography } from '@material-ui/core';
+import { FormControl, Typography } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Rating from '@material-ui/lab/Rating';
@@ -12,8 +11,12 @@ import DoctorDetails from './DoctorDetails';
 
 const DoctorList = function(props) {
 
+    //Backend APIs for getting doctor and speciality details
+
     const specialityUrl = "http://localhost:8080/doctors/speciality";
     const allDoctorUrl = "http://localhost:8080/doctors";
+
+    //State variables for storing the component state data
 
     const [specialityList, setSpecialityList] = useState([{}]);
     const [doctorsList, setDoctorsList] = useState([{}])
@@ -32,6 +35,8 @@ const DoctorList = function(props) {
         "rating":''
     });
 
+    //Function to get the speciality list from backend
+
     const loadSpeciality = async function(specialityUrl){
         try{
             const rawResponse = await fetch(specialityUrl,{
@@ -49,6 +54,8 @@ const DoctorList = function(props) {
         console.log(e.message);
         }       
     }
+
+    //Function to load the doctor details from backend
 
     const loadAllDoctors = async function(allDoctorUrl){
         try{
@@ -80,6 +87,8 @@ const DoctorList = function(props) {
         }
     }
 
+    //Function to filter the doctors based on the speciality selected by the user
+
     const loadFilteredSpeciality = async function(specialistSelected){
         try{
             const rawResponse = await fetch(`${allDoctorUrl}?speciality=${specialistSelected}`,{
@@ -98,13 +107,16 @@ const DoctorList = function(props) {
         }       
     }
 
+    //On page re-load doctors and speciality details are loaded
+
     useEffect(() => {
-        console.log("In Use Effect")
         loadSpeciality(specialityUrl);
         loadAllDoctors(allDoctorUrl);
         setBookAppointmentHandler('0');
         
     },[])
+
+    //Function to handle speciaility selection
 
     const handleSelectorChange = (event) => {
         const {
@@ -113,6 +125,8 @@ const DoctorList = function(props) {
           setFilteredSpeciality(value);
           loadFilteredSpeciality(value);
     };
+
+    //Function to handle closing and opening of Book Appointment Modal
 
     const closeBookAppointment = function () {
         setBookAppointmentHandler('0');
@@ -132,26 +146,27 @@ const DoctorList = function(props) {
                         >
                         {specialityList.map((item) => (
                             <MenuItem key={`${item}`} value={item}>
-                            <ListItemText primary={item} />
+                            <ListItemText key={item} primary={item} />
                             </MenuItem>
                         ))}
                     </Select>
             </FormControl>
             {doctorsList.map(doctor => (
                 <Box key={doctor.id} sx={BoxStyle}>
-                    <Paper id={doctor.id} elevation={1}>
-                    <Typography variant='h6' id={doctor.id} style={{display:"flex",width:"500px", justifyContent:"flex-start", margin:'5px', marginBottom:"15px", padding:"5px"}}>Doctor Name: {`${doctor.firstName} ${doctor.lastName}`}</Typography>
-                    <Typography variant='body2' id={doctor.id} style={{display:"flex",width:"240px", justifyContent:"flex-start", marginLeft:"5px", paddingLeft:"5px"}}>Speciality: {doctor.speciality}</Typography>
-                    <Typography variant='body2' id={doctor.id} style={{display:"flex",width:"240px", justifyContent:"flex-start", paddingLeft:'5px', marginLeft:'5px'}}>Rating: 
+                    <Paper key={`Paper-${doctor.id}`} id={`Paper-${doctor.id}`} elevation={1}>
+                    <Typography key={`doctorName-${doctor.id}`} variant='h6' id={`doctorName-${doctor.id}`} style={{display:"flex",width:"500px", justifyContent:"flex-start", margin:'5px', marginBottom:"15px", padding:"5px"}}>Doctor Name: {`${doctor.firstName} ${doctor.lastName}`}</Typography>
+                    <Typography key={`Speciality-${doctor.id}`} variant='body2' id={`Speciality-${doctor.id}`} style={{display:"flex",width:"240px", justifyContent:"flex-start", marginLeft:"5px", paddingLeft:"5px"}}>Speciality: {doctor.speciality}</Typography>
+                    <Typography key={`Ratingvalue-${doctor.id}`} variant='body2' id={`Ratingvalue-${doctor.id}`} style={{display:"flex",width:"240px", justifyContent:"flex-start", paddingLeft:'5px', marginLeft:'5px'}}>Rating: 
                     <Rating
-                        id={doctor.id}
+                        key={`Rating-${doctor.id}`}
+                        id={`Rating-${doctor.id}`}
                         value={(doctor.rating===undefined)?0:doctor.rating}
                         precision={0.5}
                         readOnly
                     />
                     </Typography>
-                    <div id={doctor.id} style={{display:'grid', gridTemplateColumns:"40% 40%"}}>
-                        <Button id={doctor.id} className='header-btn-1' variant="contained" onClick={openBookAppointment => {
+                    <div key={`Button-${doctor.id}`} id={`Button-${doctor.id}`} style={{display:'grid', gridTemplateColumns:"40% 40%"}}>
+                        <Button key={`Book-${doctor.id}`} id={`Book-${doctor.id}`} className='header-btn-1' variant="contained" onClick={openBookAppointment => {
                             if(window.sessionStorage.getItem('accessToken')===null)
                                 alert("Kindly login to book appointment!!");
                             else{
@@ -162,7 +177,7 @@ const DoctorList = function(props) {
                                 setSelectedDoctor({...currDoctor});
                             }
                         }} color='primary' style={{margin:"10px", marginLeft:'15px'}}>BOOK APPOINTMENT</Button>
-                        <Button id={doctor.id} className='header-btn-1' variant="contained" onClick={openDoctorDetails => {
+                        <Button key={`ViewDetails-${doctor.id}`} id={`ViewDetails-${doctor.id}`} className='header-btn-1' variant="contained" onClick={openDoctorDetails => {
                             setDoctorDetailstHandler('1');
                             const currDoctor = selectedDoctor;
                             currDoctor['doctorId'] = doctor.id;
@@ -175,7 +190,6 @@ const DoctorList = function(props) {
                             currDoctor['city'] = doctor.address.city;
                             currDoctor['rating'] = doctor.rating;
                             setSelectedDoctor({...currDoctor});
-                            console.log(selectedDoctor);
                         }}style={{margin:"10px", backgroundColor:'green', color:'white'}}>VIEW DETAILS</Button>
                     </div>
                     </Paper>

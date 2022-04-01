@@ -21,8 +21,7 @@ const Login = function(props){
         errloginPassword:""
     });
 
-    // Function to handle the login inputs from user and if user fails to enter required details then 
-    //Error Data state is updated to show error to the user
+    // Function to handle the login inputs from user
     
     const loginInputhandler = function(e){
         const currErrData = errData;
@@ -34,19 +33,20 @@ const Login = function(props){
         setErrData({...currErrData});
     }
 
+    //Function to validate the data entered by the user
+
     const validateLoginData = function(email, password) {
-        const regex = new RegExp("^[a-zA-Z0-9]+@[a-z]+\.[a-z]{2,3}$");
+        const regex = new RegExp("^[a-zA-Z0-9]+@[a-z]+[.][a-z]{2,3}$");
         let currErrData = errData;
         if(email==="" || password==="" || !regex.test(email)){
             currErrData.errEmail = (email==="")?"Please fill out this field.": (regex.test(email))?"":"Enter valid email";
             currErrData.errloginPassword = (password==="")?"Please fill out this field.":"";
+            setErrData({...currErrData});
         }
         else{
             props.OnLoginSubmitHandler(email, password);
         }
     }
-
-    // The data entered by the user is sent to server for authentication
     
     const {Email, loginPassword} = loginData;
     const {errEmail, errloginPassword} = errData;
@@ -54,7 +54,7 @@ const Login = function(props){
     return (
     <Fragment>
         <Card variant="outlined" style={{alignContent:"center", display:"flex", flexDirection:"column",alignItems:"center"}}>
-            <CardContent style={{maxWidth:"240px", minWidth:"240px", display:"flex", flexDirection:"row", justifyContent:"center"}}>
+            <CardContent style={{maxWidth:"270px", minWidth:"270px", display:"flex", flexDirection:"row", justifyContent:"center"}}>
                 <FormControl required className="form-control" style={{background:"white"}}> 
                     <InputLabel htmlFor="Email">Email</InputLabel>
                     <Input name="Email" type="text" value={Email} onChangeCapture={loginInputhandler}></Input>
@@ -64,7 +64,7 @@ const Login = function(props){
                 </FormControl>
 
             </CardContent>
-            <CardContent style={{maxWidth:"240px", minWidth:"240px", display:"flex", flexDirection:"row", justifyContent:"center"}}>
+            <CardContent style={{maxWidth:"270px", minWidth:"270px", display:"flex", flexDirection:"row", justifyContent:"center"}}>
                 <FormControl required className="form-control" style={{background:"white"}}> 
                     <InputLabel htmlFor="password">Password</InputLabel>
                     <Input name="loginPassword" type="password" value={loginPassword} onChange={loginInputhandler}></Input>

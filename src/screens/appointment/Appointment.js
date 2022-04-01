@@ -7,7 +7,8 @@ import RateAppointment from './RateAppointment.js';
 
 const Appointment = function(props) {
 
-    const [userLoggedInStatus, setUserLoggedInStatus] = useState('0');
+    // State variables to store user appointment informations
+
     const [userId, setUserId] = useState({
         "id":''
     });
@@ -16,13 +17,18 @@ const Appointment = function(props) {
         "appointmentId":"",
         "doctorId":"",
     })
+    const [userAppointmentSize, setUserAppointmentSize] = useState(0);
 
     const [userAppointments, setUserAppointments] = useState([{}]);
+
+    //Function to close RateAppointment Modal
 
     const closeRateAppointment = function(){
         setRateAppointmentStatus('0');
     }
  
+    //Function to get user appointments from backend
+
     const getUserAppointments = async function(){
         const currId = userId;
         const userData = JSON.parse(window.sessionStorage.getItem('user-details'));
@@ -41,6 +47,7 @@ const Appointment = function(props) {
             if(rawResponse.ok){
                 const result = await rawResponse.json();
                 setUserAppointments(result);
+                setUserAppointmentSize(result.length);
             }
             else{
                 throw new Error();
@@ -50,6 +57,8 @@ const Appointment = function(props) {
         }       
     }
 
+    //Styling attributes
+    
     const BoxStyle = {
         display: 'flex',
         flexDirection:'column',
@@ -64,18 +73,15 @@ const Appointment = function(props) {
     }
     
     useEffect(() => {
-        if(window.sessionStorage.getItem('accessToken') === null)
-            setUserLoggedInStatus('0');
-        else{
-            setUserLoggedInStatus('1');
+        if(props.isUserLoggedIn==='true')
             getUserAppointments();
-        }
     },[])
 
     return(
         <Fragment>
-            {userLoggedInStatus==='0' && <Typography variant='body1' className="displayMessage" id="displayMessage" style={{display:"grid", width:"100%", marginTop:'15px', justifyContent:"center", fontWeight:"600"}}>Login to see appointments</Typography>}
-            {userLoggedInStatus==='1' && <div className='appointmentDetails' style={{marginTop:"30px"}}>
+            {props.isUserLoggedIn==='false' && <Typography variant='body1' className="displayMessage" id="displayMessage" style={{display:"grid", width:"100%", marginTop:'15px', justifyContent:"center", fontWeight:"600"}}>Login to see appointments</Typography>}
+            {props.isUserLoggedIn==='true' && userAppointmentSize===0 && <Typography variant='body1' className="displayMessage" id="displayMessage" style={{display:"grid", width:"100%", marginTop:'15px', justifyContent:"center", fontWeight:"600"}}>You dont have any appointments.</Typography>}
+            {props.isUserLoggedIn==='true' && userAppointmentSize!==0 && <div className='appointmentDetails' style={{marginTop:"30px"}}>
             {userAppointments.map(appointment => (
                 <Box key={appointment.appointmentId} sx={BoxStyle}>
                 <Paper id={appointment.appointmentId} elevation={1}>

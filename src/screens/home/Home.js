@@ -5,24 +5,19 @@ import {Tab} from "@material-ui/core";
 import Doctor from '../doctorList/DoctorList.js';
 import Appointment from '../appointment/Appointment.js';
 import './Home.css';
-import Grid from '@material-ui/core/Grid';
-
 
 const Home = function(props) {
+
+    //State variables to store user login status and clicked tab status
 
     const [isUserLoggedIn, setIsUserLoggedIn] = useState('false');
     const [tabCurrentValue, setTabValue] = useState(0);
 
+    //Function to Handle Tab Change
+
     const handleTabChange = function(event, newValue) {
         setTabValue(newValue);
     }
-
-    useEffect(() => {
-        if(sessionStorage.getItem('accessToken')===null)
-            setIsUserLoggedIn('false');
-        else
-            setIsUserLoggedIn('true');
-    })
 
     function TabPanel(props) {
         const { children, value, index, ...other } = props;
@@ -42,9 +37,18 @@ const Home = function(props) {
         );
       }
 
+    //On page re-load whether user is logged in or not is checked here
+
+    useEffect(() => {
+        if(sessionStorage.getItem('accessToken')===null)
+            setIsUserLoggedIn('false');
+        else
+            setIsUserLoggedIn('true');
+    })
+
     return(
         <Fragment>
-            <Header baseUrl={props.baseUrl} tabPanelFunction={TabPanel}/>
+            <Header baseUrl={props.baseUrl} tabPanelFunction={TabPanel} isUserLoggedIn={isUserLoggedIn} setIsUserLoggedIn={setIsUserLoggedIn}/>
             <div className="Tab-Model">
                 <Tabs value={tabCurrentValue} onChange={handleTabChange} aria-label="basic tabs example" centered indicatorColor='primary'>  
                     <Tab label="DOCTORS" style={{maxWidth:"50%", minWidth:"50%"}}/>
@@ -54,7 +58,7 @@ const Home = function(props) {
                     <Doctor baseUrl={props.baseUrl}/>
                 </TabPanel>
                 <TabPanel value={tabCurrentValue} index={1}>
-                    <Appointment baseUrl={props.baseUrl}/>
+                    <Appointment baseUrl={props.baseUrl} isUserLoggedIn={isUserLoggedIn} setIsUserLoggedIn={setIsUserLoggedIn}/>
                 </TabPanel>
             </div>
         </Fragment>
