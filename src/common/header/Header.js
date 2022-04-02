@@ -110,11 +110,11 @@ const Header = function(properties) {
                 closeLoginHandler();
 
             } else {
-                const error = new Error();
-                error.message = result.message || 'Login Failed';
+                alert("Invalid username or password");
+                throw new Error("Invalid username or password");
             }
         } catch(e) {
-            alert(`Error: ${e.message}`);
+            console.log(e.message);
         }
     }
 

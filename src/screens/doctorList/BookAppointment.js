@@ -15,11 +15,13 @@ const BookAppointment = function(props) {
 
     //State variables to store booking information
 
-    const currentDate = new Date('2021-05-26T03:24:00');
+    //const currentDate = new Date('2021-05-26T03:24:00');
+    const currentDate = new Date();
     const [modalOpenStatus, setModalOpenStatus] = useState(true);
     const [date, setDate] = React.useState(`${currentDate.getFullYear()}-${("0"+(currentDate.getMonth()+1)).slice(-2)}-${("0"+currentDate.getDate()).slice(-2)}`);
     const [timeSlotList, setTimeSlotList] = useState([])
     const [timeSlotError, setTimeSlotError] = useState('');
+    const [timeSlotSize, setTimeSlotSize] = useState(0);
     const [appointmentData, setAppointmentData] = useState(
         {
             "doctorId": props.doctor.doctorId,
@@ -77,6 +79,7 @@ const BookAppointment = function(props) {
             if(rawResponse.ok){
                 const result = await rawResponse.json();
                 setTimeSlotList(result.timeSlot);
+                setTimeSlotSize(result.timeSlot.length);
             }
             else{
                 throw new Error();
@@ -203,7 +206,12 @@ const BookAppointment = function(props) {
                         </MuiPickersUtilsProvider>
                 </FormControl>
             </CardContent>
-            <CardContent style={{maxWidth:"240px", minWidth:"240px", margin:"2px"}}>
+            {timeSlotSize===0 && <CardContent style={{maxWidth:"240px", minWidth:"240px", margin:"2px"}}>
+            <FormControl variant='standard' style={{display:"flex", margin:"2px"}}>
+                <TextField disabled className='timeslot-notAvailable' label="Timeslot" type="text" value="No timeslots available" style={{maxWidth:"240px", minWidth:"240px"}}/>
+            </FormControl>
+            </CardContent>}
+            {timeSlotSize!==0 && <CardContent style={{maxWidth:"240px", minWidth:"240px", margin:"2px"}}>
             <FormControl required variant='standard' style={{display:"flex", margin:"2px"}}>
                 <Typography id="timeslot-selector">Timeslot </Typography>
                     <Select
@@ -219,9 +227,9 @@ const BookAppointment = function(props) {
                             </MenuItem>
                         ))}
                     </Select>
-                <Typography component="span" className="red" style={{color:"red"}}>{timeSlotError}</Typography>
             </FormControl>
-            </CardContent>
+            </CardContent>}
+            <Typography component="span" className="red" style={{color:"red", maxWidth:"240px", minWidth:"240px", marginLeft:"20px"}}>{timeSlotError}</Typography>
             <CardContent style={{maxWidth:"240px", minWidth:"240px", margin:"2px"}}>
                 <FormControl className="form-control" style={{background:"white", color:"black"}}> 
                     <TextField name="priorMedicalHistory" label="Medical History" multiline rows={4} value={appointmentData.priorMedicalHistory} onChange={inputChangehandler} style={{maxWidth:"240px", minWidth:"240px", color:"black"}}></TextField>
